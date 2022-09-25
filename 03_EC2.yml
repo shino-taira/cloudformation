@@ -1,12 +1,16 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Create EC2
 
+Parameters:
+  PJPrefix:
+    Type: String
+    Default: "lalala"
+
 Resources: 
 #EC2インスタンス
   lalalaEC2Instance1a:
     Type: AWS::EC2::Instance
     Properties:
-      AvailabilityZone: ap-northeast-1a
       KeyName: First-key
       IamInstanceProfile: !ImportValue IAMInstanceProfileId
       ImageId: ami-0b7546e839d7ace12
@@ -19,7 +23,7 @@ Resources:
           DeviceIndex: 0
       Tags:
         - Key: Name
-          Value: lalala-ec2-1a
+          Value: !Sub ${PJPrefix}-ec2-1a
 
 #セキュリティグループ(EC2)
   lalalaSGEC2:
@@ -42,7 +46,7 @@ Resources:
           CidrIp: 0.0.0.0/0
       Tags: 
         - Key: Name
-          Value: lalala-sg-ec2
+          Value: !Sub ${PJPrefix}-sg-ec2
 
 Outputs:
   EC2Instance1aId:

@@ -1,6 +1,11 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Create ELB 
 
+Parameters:
+  PJPrefix:
+    Type: String
+    Default: "lalala"
+
 Resources: 
 #ELB(ALB)
   lalalaELB:
@@ -15,7 +20,7 @@ Resources:
         - !ImportValue PublicSubnet1cId
       Tags:
         - Key: Name
-          Value: lalala-elb
+          Value: !Sub ${PJPrefix}-elb
       Type: application 
 
 #ELBターゲットグループ
@@ -27,7 +32,7 @@ Resources:
       ProtocolVersion: HTTP1
       Tags:
         - Key: Name 
-          Value: lalala-elb-tg
+          Value: !Sub ${PJPrefix}-elb-tg
       TargetType: instance 
       Targets:
         - Id: !ImportValue EC2Instance1aId

@@ -1,9 +1,14 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Create S3 
 
+Parameters:
+  PJPrefix:
+    Type: String
+    Default: "lalala"
+
 Resources:
 #S3バケット
   lalalaS3:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: lalala-s3bucket-aloha #グローバルで一意、小文字
+      BucketName: !Sub ${PJPrefix}-s3-aloha #グローバルで一意、小文字
