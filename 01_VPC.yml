@@ -7,7 +7,7 @@ Parameters:
     Default: "-"
 
   AvailabilityZone:
-    Descripttion: input AvailabilityZone 
+    Description: input AvailabilityZone 
     Type: String 
     Default: ap-northeast-1
 
