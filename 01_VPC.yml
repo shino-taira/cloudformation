@@ -1,12 +1,96 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Create VPC 
 
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          Default: "PJPrefix"
+        Parameters:
+          - PJPrefix
+      - Label:
+          Default: Network Layer Configuration 
+        Parameters:
+          - AvailabilityZoneName
+          - VPCCIDR 
+          - PublicSubnet1aCIDR
+          - PublicSubnet1cCIDR
+          - PrivateSubnet1aCIDR
+          - PrivateSubnet1cCIDR
+          - PublicSubnetName
+          - PrivateSubnetName
+
+    ParameterLabels:
+      AvailabilityZoneName:
+        Default: AvailabilityZoneName
+      VPCCIDR:
+        Default: VPCCIDR 
+      PublicSubnet1aCIDR:
+        Default: PublicSubnet1aCIDR
+      PublicSubnet1cCIDR:
+        Default: PublicSubnet1cCIDR
+      PrivateSubnet1aCIDR:
+        Default: PrivateSubnet1aCIDR
+      PrivateSubnet1cCIDR:
+        Default: PrivateSubnet1cCIDR
+      PublicSubnetName:
+        Default: PublicSubnetName
+      PrivateSubnetName:
+        Default: PrivateSubnetName
+
+#-------------------------------------
+#Input Parameters
+#-------------------------------------
+Parameters:
+  PJPrefix:
+    Type: String
+    Default: "-"
+
+  AvailabilityZone:
+    Descripttion: input AvailabilityZone 
+    Type: String 
+    Default: ap-northeast-1a
+
+  VPCCIDR:
+    Type: String
+    Default: 10.0.0.0/16
+    
+  PublicSubnet1aCIDR:
+    Type: String
+    Default: 10.0.10.0/24
+
+  PublicSubnet1cCIDR:
+    Type: String
+    Default: 10.0.20.0/24
+
+  PrivateSubnet1aCIDR:
+    Type: String
+    Default: 10.0.30.0/24
+
+  PrivateSubnet1cCIDR:
+    Type: String
+    Default: 10.0.40.0/24
+
+  PublicSubnetName:
+    Type: String
+    Default: 
+    ###ここから再開！###
+    
+  PrivateSubnetName:
+    Type: String
+    Default: 
+
+
+
+
 Resources: 
 #VPC
   lalalaVPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: 10.0.0.0/16
+      CidrBlock: !Ref VPCCIDR 
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
       Tags:
         - Key: Name
           Value: lalala-vpc
@@ -16,7 +100,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: ap-northeast-1a
-      CidrBlock: 10.0.0.0/24
+      CidrBlock: !Ref PublicSubnet1aCIDR
       VpcId: !Ref lalalaVPC # Required
       MapPublicIpOnLaunch: true
       Tags:
@@ -27,7 +111,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: ap-northeast-1c
-      CidrBlock: 10.0.16.0/24
+      CidrBlock: !Ref !Ref PublicSubnet1cCIDR
       VpcId: !Ref lalalaVPC # Required
       MapPublicIpOnLaunch: true
       Tags:
@@ -39,7 +123,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: ap-northeast-1a
-      CidrBlock: 10.0.128.0/24
+      CidrBlock: !Ref PrivateSubnet1aCIDR
       VpcId: !Ref lalalaVPC # Required      
       MapPublicIpOnLaunch: false
       Tags:
@@ -50,7 +134,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: ap-northeast-1c
-      CidrBlock: 10.0.144.0/24
+      CidrBlock: !Ref PrivateSubnet1cCIDR
       VpcId: !Ref lalalaVPC # Required      
       MapPublicIpOnLaunch: false
       Tags:
