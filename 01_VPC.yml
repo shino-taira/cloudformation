@@ -41,12 +41,15 @@ Metadata:
 Parameters:
   PJPrefix:
     Type: String
-    Default: "-"
+    Default: "lalala"
 
-  AvailabilityZone:
-    Description: input AvailabilityZone 
+  AZa:
     Type: String 
-    Default: ap-northeast-1
+    Default: ap-northeast-1a
+
+  AZc:
+    Type: String 
+    Default: ap-northeast-1c
 
   VPCCIDR:
     Type: String
@@ -69,12 +72,10 @@ Parameters:
     Default: 10.0.40.0/24
 
   PublicSubnetName:
-    Description: input PublicSubnet
     Type: String
     Default: pubsub-1
 
   PrivateSubnetName:
-    Description: input PrivateSubnet
     Type: String
     Default: prisub-1
 
@@ -99,7 +100,7 @@ Resources:
   lalalaPublicSubnet1a:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: !Sub ${AvailabilityZone}a
+      AvailabilityZone: !Ref AZa 
       CidrBlock: !Ref PublicSubnet1aCIDR
       VpcId: !Ref lalalaVPC # Required
       MapPublicIpOnLaunch: true
