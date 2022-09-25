@@ -11,18 +11,19 @@ Metadata:
       - Label:
           Default: Network Layer Configuration 
         Parameters:
-          - AvailabilityZone
+          - AZa
+          - AZc
           - VPCCIDR 
           - PublicSubnet1aCIDR
           - PublicSubnet1cCIDR
           - PrivateSubnet1aCIDR
           - PrivateSubnet1cCIDR
-          - PublicSubnetName
-          - PrivateSubnetName
 
     ParameterLabels:
-      AvailabilityZone:
-        Default: AvailabilityZone
+      AZa:
+        Default: AZa
+      AZc:
+        Default: AZc
       VPCCIDR:
         Default: VPC CIDR 
       PublicSubnet1aCIDR:
@@ -33,20 +34,19 @@ Metadata:
         Default: PrivateSubnet1a CIDR
       PrivateSubnet1cCIDR:
         Default: PrivateSubnet1c CIDR
-      PublicSubnetName:
-        Default: PublicSubnetName
-      PrivateSubnetName:
-        Default: PrivateSubnetName
 
 Parameters:
   PJPrefix:
     Type: String
-    Default: "-"
+    Default: "lalala"
 
-  AvailabilityZone:
-    Description: input AvailabilityZone 
+  AZa:
     Type: String 
-    Default: ap-northeast-1
+    Default: ap-northeast-1a
+
+  AZc:
+    Type: String 
+    Default: ap-northeast-1c
 
   VPCCIDR:
     Type: String
@@ -68,17 +68,6 @@ Parameters:
     Type: String
     Default: 10.0.40.0/24
 
-  PublicSubnetName:
-    Description: input PublicSubnet
-    Type: String
-    Default: pubsub-1
-
-  PrivateSubnetName:
-    Description: input PrivateSubnet
-    Type: String
-    Default: prisub-1
-
-
 Resources: 
 #--------------------------------
 # VPC
@@ -99,24 +88,24 @@ Resources:
   lalalaPublicSubnet1a:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: !Sub ${AvailabilityZone}a
+      AvailabilityZone: !Ref AZa 
       CidrBlock: !Ref PublicSubnet1aCIDR
       VpcId: !Ref lalalaVPC # Required
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${PJPrefix}-${PublicSubnetName}a
+          Value: !Sub ${PJPrefix}-pubsub-1a
 
   lalalaPublicSubnet1c:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: !Sub ${AvailabilityZone}c
+      AvailabilityZone: !Ref AZc
       CidrBlock: !Ref PublicSubnet1cCIDR
       VpcId: !Ref lalalaVPC # Required
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${PJPrefix}-${PublicSubnetName}c
+          Value: !Sub ${PJPrefix}-pubsub-1c
 
 #------------------------------------------------------------
 # プライベートサブネット(RDSサブネットグループ作成のため2つ必要 1a/1c)
@@ -124,24 +113,24 @@ Resources:
   lalalaPrivateSubnet1a:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: !Sub ${AvailabilityZone}a
+      AvailabilityZone: !Ref AZa 
       CidrBlock: !Ref PrivateSubnet1aCIDR
       VpcId: !Ref lalalaVPC # Required      
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${PJPrefix}-${PrivateSubnetName}a
+          Value: !Sub ${PJPrefix}-prisub-1a
 
   lalalaPrivateSubnet1c:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: !Sub ${AvailabilityZone}c
+      AvailabilityZone: !Ref AZc
       CidrBlock: !Ref PrivateSubnet1cCIDR
       VpcId: !Ref lalalaVPC # Required      
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${PJPrefix}-${PrivateSubnetName}c
+          Value: !Sub ${PJPrefix}-prisub-1c
 
 #---------------------------
 # インターネットゲートウェイ
