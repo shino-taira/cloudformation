@@ -1,69 +1,157 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Create VPC 
 
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          Default: "PJPrefix"
+        Parameters:
+          - PJPrefix
+      - Label:
+          Default: Network Layer Configuration 
+        Parameters:
+          - AvailabilityZone
+          - VPCCIDR 
+          - PublicSubnet1aCIDR
+          - PublicSubnet1cCIDR
+          - PrivateSubnet1aCIDR
+          - PrivateSubnet1cCIDR
+          - PublicSubnetName
+          - PrivateSubnetName
+
+    ParameterLabels:
+      AvailabilityZone:
+        Default: AvailabilityZone
+      VPCCIDR:
+        Default: VPC CIDR 
+      PublicSubnet1aCIDR:
+        Default: PublicSubnet1a CIDR
+      PublicSubnet1cCIDR:
+        Default: PublicSubnet1c CIDR
+      PrivateSubnet1aCIDR:
+        Default: PrivateSubnet1a CIDR
+      PrivateSubnet1cCIDR:
+        Default: PrivateSubnet1c CIDR
+      PublicSubnetName:
+        Default: PublicSubnetName
+      PrivateSubnetName:
+        Default: PrivateSubnetName
+
+Parameters:
+  PJPrefix:
+    Type: String
+    Default: "-"
+
+  AvailabilityZone:
+    Description: input AvailabilityZone 
+    Type: String 
+    Default: ap-northeast-1
+
+  VPCCIDR:
+    Type: String
+    Default: 10.0.0.0/16
+    
+  PublicSubnet1aCIDR:
+    Type: String
+    Default: 10.0.10.0/24
+
+  PublicSubnet1cCIDR:
+    Type: String
+    Default: 10.0.20.0/24
+
+  PrivateSubnet1aCIDR:
+    Type: String
+    Default: 10.0.30.0/24
+
+  PrivateSubnet1cCIDR:
+    Type: String
+    Default: 10.0.40.0/24
+
+  PublicSubnetName:
+    Description: input PublicSubnet
+    Type: String
+    Default: pubsub-1
+
+  PrivateSubnetName:
+    Description: input PrivateSubnet
+    Type: String
+    Default: prisub-1
+
+
 Resources: 
-#VPC
+#--------------------------------
+# VPC
+#--------------------------------
   lalalaVPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: 10.0.0.0/16
+      CidrBlock: !Ref VPCCIDR 
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
       Tags:
         - Key: Name
-          Value: lalala-vpc
+          Value: !Sub ${PJPrefix}-vpc
 
-#パブリックサブネット(ELB作成のため2つ必要)
+#--------------------------------------------
+# パブリックサブネット(ELB作成のため2つ必要 1a/1c)
+#--------------------------------------------
   lalalaPublicSubnet1a:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: ap-northeast-1a
-      CidrBlock: 10.0.0.0/24
+      AvailabilityZone: !Sub ${AvailabilityZone}a
+      CidrBlock: !Ref PublicSubnet1aCIDR
       VpcId: !Ref lalalaVPC # Required
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: lalala-pubsub-1a
+          Value: !Sub ${PJPrefix}-${PublicSubnetName}a
 
   lalalaPublicSubnet1c:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: ap-northeast-1c
-      CidrBlock: 10.0.16.0/24
+      AvailabilityZone: !Sub ${AvailabilityZone}c
+      CidrBlock: !Ref PublicSubnet1cCIDR
       VpcId: !Ref lalalaVPC # Required
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: lalala-pubsub-1c
+          Value: !Sub ${PJPrefix}-${PublicSubnetName}c
 
-#プライベートサブネット(RDSサブネットグループ作成のため2つ必要)
+#------------------------------------------------------------
+# プライベートサブネット(RDSサブネットグループ作成のため2つ必要 1a/1c)
+#------------------------------------------------------------
   lalalaPrivateSubnet1a:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: ap-northeast-1a
-      CidrBlock: 10.0.128.0/24
+      AvailabilityZone: !Sub ${AvailabilityZone}a
+      CidrBlock: !Ref PrivateSubnet1aCIDR
       VpcId: !Ref lalalaVPC # Required      
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: lalala-prisub-1a
+          Value: !Sub ${PJPrefix}-${PrivateSubnetName}a
 
   lalalaPrivateSubnet1c:
     Type: AWS::EC2::Subnet
     Properties:
-      AvailabilityZone: ap-northeast-1c
-      CidrBlock: 10.0.144.0/24
+      AvailabilityZone: !Sub ${AvailabilityZone}c
+      CidrBlock: !Ref PrivateSubnet1cCIDR
       VpcId: !Ref lalalaVPC # Required      
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: lalala-prisub-1c
+          Value: !Sub ${PJPrefix}-${PrivateSubnetName}c
 
-#インターネットゲートウェイ
+#---------------------------
+# インターネットゲートウェイ
+#---------------------------
   lalalaIGW:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: lalala-igw
+          Value: !Sub ${PJPrefix}-igw
 
 #インターネットゲートウェイをVPCにアタッチ
   AttachGateway:
@@ -72,16 +160,18 @@ Resources:
       VpcId: !Ref lalalaVPC # Required
       InternetGatewayId: !Ref lalalaIGW
 
-#パブリックサブネットのルートテーブルを作成
+#--------------------------------------
+# パブリックサブネットのルートテーブルを作成
+#--------------------------------------
   lalalaRouteTablePublic:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref lalalaVPC # Required
       Tags:
         - Key: Name
-          Value: lalala-rt-pub
+          Value: !Sub ${PJPrefix}-rt-pub
 
-#ルートの設定(パブリックサブネット)
+#ルート先にIGWを定義
   lalalaRoutePublic:
     Type: AWS::EC2::Route
     Properties:
