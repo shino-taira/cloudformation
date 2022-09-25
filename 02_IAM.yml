@@ -1,6 +1,11 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Create IAM Role 
 
+Parameters:
+  PJPrefix:
+    Type: String
+    Default: "lalala"
+
 Resources: 
 #IAMロール
   lalalaIAMRole:
@@ -18,7 +23,7 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonS3FullAccess
       Path: "/"
-      RoleName: lalala-iam-role
+      RoleName: !Sub ${PJPrefix}-iam-role
 
 #IAMポリシー
   lalalaIAMPolicy:
@@ -30,7 +35,7 @@ Resources:
             Resource: "*"
             Action: 
               - ec2:*
-      PolicyName: lalala-iam-policy # Required
+      PolicyName: !Sub ${PJPrefix}-iam-policy # Required
       Roles:
         - !Ref lalalaIAMRole
 
@@ -38,7 +43,7 @@ Resources:
   lalalaIAMInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
-      InstanceProfileName: lalala-iam-instance-profile
+      InstanceProfileName: !Sub ${PJPrefix}-iam-instance-profile
       Path: "/"
       Roles: # Required
         - !Ref lalalaIAMRole
