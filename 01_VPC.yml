@@ -1,6 +1,43 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Create VPC 
 
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          Default: "PJPrefix"
+        Parameters:
+          - PJPrefix
+      - Label:
+          Default: Network Layer Configuration 
+        Parameters:
+          - AvailabilityZone
+          - VPCCIDR 
+          - PublicSubnet1aCIDR
+          - PublicSubnet1cCIDR
+          - PrivateSubnet1aCIDR
+          - PrivateSubnet1cCIDR
+          - PublicSubnetName
+          - PrivateSubnetName
+
+    ParameterLabels:
+      AvailabilityZone:
+        Default: AvailabilityZone
+      VPCCIDR:
+        Default: VPC CIDR 
+      PublicSubnet1aCIDR:
+        Default: PublicSubnet1a CIDR
+      PublicSubnet1cCIDR:
+        Default: PublicSubnet1c CIDR
+      PrivateSubnet1aCIDR:
+        Default: PrivateSubnet1a CIDR
+      PrivateSubnet1cCIDR:
+        Default: PrivateSubnet1c CIDR
+      PublicSubnetName:
+        Default: PublicSubnetName
+      PrivateSubnetName:
+        Default: PrivateSubnetName
+
 Parameters:
   PJPrefix:
     Type: String
