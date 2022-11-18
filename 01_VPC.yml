@@ -1,6 +1,9 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Create VPC 
 
+#========================================================================
+# メタデータ(コンソール画面でパラメータのグループ化や順序の指定ができる)
+#========================================================================
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -17,12 +20,10 @@ Metadata:
           - PublicSubnet1cCIDR
           - PrivateSubnet1aCIDR
           - PrivateSubnet1cCIDR
-          - PublicSubnetName
-          - PrivateSubnetName
 
     ParameterLabels:
       AvailabilityZone:
-        Default: AvailabilityZone
+        Default: Availability Zone
       VPCCIDR:
         Default: VPC CIDR 
       PublicSubnet1aCIDR:
@@ -33,18 +34,15 @@ Metadata:
         Default: PrivateSubnet1a CIDR
       PrivateSubnet1cCIDR:
         Default: PrivateSubnet1c CIDR
-      PublicSubnetName:
-        Default: PublicSubnetName
-      PrivateSubnetName:
-        Default: PrivateSubnetName
 
+#====================================================
+# パラメータ(コンソール画面上で指定できる項目)
+#====================================================
 Parameters:
   PJPrefix:
     Type: String
-    Default: "-"
 
   AvailabilityZone:
-    Description: input AvailabilityZone 
     Type: String 
     Default: ap-northeast-1
 
@@ -67,16 +65,6 @@ Parameters:
   PrivateSubnet1cCIDR:
     Type: String
     Default: 10.0.40.0/24
-
-  PublicSubnetName:
-    Description: input PublicSubnet
-    Type: String
-    Default: pubsub-1
-
-  PrivateSubnetName:
-    Description: input PrivateSubnet
-    Type: String
-    Default: prisub-1
 
 
 Resources: 
@@ -105,7 +93,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${PJPrefix}-${PublicSubnetName}a
+          Value: !Sub ${PJPrefix}-public-subnet1a
 
   lalalaPublicSubnet1c:
     Type: AWS::EC2::Subnet
@@ -116,7 +104,7 @@ Resources:
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
-          Value: !Sub ${PJPrefix}-${PublicSubnetName}c
+          Value: !Sub ${PJPrefix}-public-subnet1c
 
 #------------------------------------------------------------
 # プライベートサブネット(RDSサブネットグループ作成のため2つ必要 1a/1c)
@@ -130,7 +118,7 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${PJPrefix}-${PrivateSubnetName}a
+          Value: !Sub ${PJPrefix}-private-subnet1a
 
   lalalaPrivateSubnet1c:
     Type: AWS::EC2::Subnet
@@ -141,7 +129,7 @@ Resources:
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
-          Value: !Sub ${PJPrefix}-${PrivateSubnetName}c
+          Value: !Sub ${PJPrefix}-private-subnet1c
 
 #---------------------------
 # インターネットゲートウェイ
