@@ -4,11 +4,10 @@ Description: Create ELB
 Parameters:
   PJPrefix:
     Type: String
-    Default: "lalala"
 
 Resources: 
 #ELB(ALB)
-  lalalaELB:
+  ELB:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       IpAddressType: ipv4
@@ -24,7 +23,7 @@ Resources:
       Type: application 
 
 #ELBターゲットグループ
-  lalalaELBTargetGroup:
+  ELBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       Port: 80
@@ -39,20 +38,20 @@ Resources:
       VpcId: !ImportValue VPCId
 
 #ELBリスナー
-  lalalaELBListener:
+  ELBListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions: # Required
-        - TargetGroupArn: !Ref lalalaELBTargetGroup
+        - TargetGroupArn: !Ref ELBTargetGroup
           Type: forward #forwardは指定されたターゲットグループにリクエストを送信
-      LoadBalancerArn: !Ref lalalaELB # Required
+      LoadBalancerArn: !Ref ELB # Required
       Port: 80
       Protocol: HTTP 
 
 
 Outputs:
   ELBId:
-    Value: !Ref lalalaELB
+    Value: !Ref ELB
     Export: 
       Name: ELBId
 

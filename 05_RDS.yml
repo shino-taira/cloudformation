@@ -5,11 +5,10 @@ Parameters:
 #RDSのMasterUsserPassword
   PJPrefix:
     Type: String
-    Default: "lalala" 
-  
-  AZa:
+
+  AvailabilityZone:
     Type: String 
-    Default: ap-northeast-1a
+    Default: ap-northeast-1
 
   DBPassword:
     Type: String 
@@ -18,25 +17,25 @@ Parameters:
 
 Resources: 
 #RDSインスタンス
-  lalalaRDSInstance:
+  RDSInstance:
     Type: AWS::RDS::DBInstance
     Properties:
       AllocatedStorage: 20
-      AvailabilityZone: !Ref AZa 
+      AvailabilityZone: !Sub ${AvailabilityZone}a
       DBInstanceClass: db.t2.micro # Required
       DBInstanceIdentifier: !Sub ${PJPrefix}-rds #DBインスタンスの名前(小文字)
       DBName: !Sub ${PJPrefix}RDS
-      DBParameterGroupName: !Ref lalalaRDSParameterGroup
-      DBSubnetGroupName: !Ref lalalaRDSSubnetGroup
+      DBParameterGroupName: !Ref RDSParameterGroup
+      DBSubnetGroupName: !Ref RDSSubnetGroup
       Engine: mysql
       EngineVersion: 8.0.28
       MasterUserPassword: !Ref DBPassword
       MasterUsername: admin 
       VPCSecurityGroups:
-        - !Ref lalalaRDSSecurityGroup
+        - !Ref RDSSecurityGroup
 
 #サブネットグループ
-  lalalaRDSSubnetGroup:
+  RDSSubnetGroup:
     Type: AWS::RDS::DBSubnetGroup
     Properties:
       DBSubnetGroupDescription: SubnetGroup for RDS # Required
@@ -46,7 +45,7 @@ Resources:
         - !ImportValue PrivateSubnet1cId
 
 #RDSのセキュリティグループ
-  lalalaRDSSecurityGroup:
+  RDSSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: MySQL access for RDS # Required
@@ -61,7 +60,7 @@ Resources:
       VpcId: !ImportValue VPCId 
 
 #RDSのパラメータグループ
-  lalalaRDSParameterGroup:
+  RDSParameterGroup:
     Type: AWS::RDS::DBParameterGroup
     Properties:
       Description: ParameterGroup for RDS # Required
@@ -73,6 +72,6 @@ Resources:
 
 Outputs:
   RDSInstanceId:
-    Value: !Ref lalalaRDSInstance
+    Value: !Ref RDSInstance
     Export: 
       Name: RDSInstanceId

@@ -4,11 +4,10 @@ Description: Create IAM Role
 Parameters:
   PJPrefix:
     Type: String
-    Default: "lalala"
 
 Resources: 
 #IAMロール
-  lalalaIAMRole:
+  IAMRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument: # Required
@@ -26,7 +25,7 @@ Resources:
       RoleName: !Sub ${PJPrefix}-iam-role
 
 #IAMポリシー
-  lalalaIAMPolicy:
+  IAMPolicy:
     Type: AWS::IAM::Policy
     Properties:
       PolicyDocument: # Required
@@ -37,25 +36,25 @@ Resources:
               - ec2:*
       PolicyName: !Sub ${PJPrefix}-iam-policy # Required
       Roles:
-        - !Ref lalalaIAMRole
+        - !Ref IAMRole
 
 #IAMインスタンスプロファイル
-  lalalaIAMInstanceProfile:
+  IAMInstanceProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
       InstanceProfileName: !Sub ${PJPrefix}-iam-instance-profile
       Path: "/"
       Roles: # Required
-        - !Ref lalalaIAMRole
+        - !Ref IAMRole
 
 Outputs:
   IAMRoleId:
-    Value: !Ref lalalaIAMRole
+    Value: !Ref IAMRole
     Export: 
       Name: IAMRoleId
 
   IAMInstanceProfileId:
-    Value: !Ref lalalaIAMInstanceProfile
+    Value: !Ref IAMInstanceProfile
     Export: 
       Name: IAMInstanceProfileId
   

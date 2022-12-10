@@ -4,11 +4,10 @@ Description: Create S3
 Parameters:
   PJPrefix:
     Type: String
-    Default: "lalala"
 
 Resources:
 #S3バケット
-  lalalaS3:
+  S3:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub ${PJPrefix}-s3-aloha #グローバルで一意、小文字

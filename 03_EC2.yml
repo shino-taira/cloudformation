@@ -4,11 +4,10 @@ Description: Create EC2
 Parameters:
   PJPrefix:
     Type: String
-    Default: "lalala"
 
 Resources: 
 #EC2インスタンス
-  lalalaEC2Instance1a:
+  EC2Instance1a:
     Type: AWS::EC2::Instance
     Properties:
       KeyName: First-key
@@ -18,7 +17,7 @@ Resources:
       NetworkInterfaces:
         - SubnetId: !ImportValue PublicSubnet1aId
           GroupSet:
-            - !Ref lalalaSGEC2
+            - !Ref SGEC2
           AssociatePublicIpAddress: true
           DeviceIndex: 0
       Tags:
@@ -26,7 +25,7 @@ Resources:
           Value: !Sub ${PJPrefix}-ec2-1a
 
 #セキュリティグループ(EC2)
-  lalalaSGEC2:
+  SGEC2:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: SecurityGroup for EC2  
@@ -50,11 +49,11 @@ Resources:
 
 Outputs:
   EC2Instance1aId:
-    Value: !Ref lalalaEC2Instance1a
+    Value: !Ref EC2Instance1a
     Export: 
       Name: EC2Instance1aId
 
   SGEC2Id:
-    Value: !Ref lalalaSGEC2
+    Value: !Ref SGEC2
     Export: 
       Name: SGEC2Id
