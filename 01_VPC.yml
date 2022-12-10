@@ -71,7 +71,7 @@ Resources:
 #--------------------------------
 # VPC
 #--------------------------------
-  lalalaVPC:
+  VPC:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: !Ref VPCCIDR 
@@ -84,23 +84,23 @@ Resources:
 #--------------------------------------------
 # パブリックサブネット(ELB作成のため2つ必要 1a/1c)
 #--------------------------------------------
-  lalalaPublicSubnet1a:
+  PublicSubnet1a:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: !Sub ${AvailabilityZone}a
       CidrBlock: !Ref PublicSubnet1aCIDR
-      VpcId: !Ref lalalaVPC # Required
+      VpcId: !Ref VPC # Required
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
           Value: !Sub ${PJPrefix}-public-subnet1a
 
-  lalalaPublicSubnet1c:
+  PublicSubnet1c:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: !Sub ${AvailabilityZone}c
       CidrBlock: !Ref PublicSubnet1cCIDR
-      VpcId: !Ref lalalaVPC # Required
+      VpcId: !Ref VPC # Required
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
@@ -109,23 +109,23 @@ Resources:
 #------------------------------------------------------------
 # プライベートサブネット(RDSサブネットグループ作成のため2つ必要 1a/1c)
 #------------------------------------------------------------
-  lalalaPrivateSubnet1a:
+  PrivateSubnet1a:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: !Sub ${AvailabilityZone}a
       CidrBlock: !Ref PrivateSubnet1aCIDR
-      VpcId: !Ref lalalaVPC # Required      
+      VpcId: !Ref VPC # Required      
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
           Value: !Sub ${PJPrefix}-private-subnet1a
 
-  lalalaPrivateSubnet1c:
+  PrivateSubnet1c:
     Type: AWS::EC2::Subnet
     Properties:
       AvailabilityZone: !Sub ${AvailabilityZone}c
       CidrBlock: !Ref PrivateSubnet1cCIDR
-      VpcId: !Ref lalalaVPC # Required      
+      VpcId: !Ref VPC # Required      
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
@@ -134,7 +134,7 @@ Resources:
 #---------------------------
 # インターネットゲートウェイ
 #---------------------------
-  lalalaIGW:
+  IGW:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
@@ -145,65 +145,65 @@ Resources:
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId: !Ref lalalaVPC # Required
-      InternetGatewayId: !Ref lalalaIGW
+      VpcId: !Ref VPC # Required
+      InternetGatewayId: !Ref IGW
 
 #--------------------------------------
 # パブリックサブネットのルートテーブルを作成
 #--------------------------------------
-  lalalaRouteTablePublic:
+  RouteTablePublic:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref lalalaVPC # Required
+      VpcId: !Ref VPC # Required
       Tags:
         - Key: Name
           Value: !Sub ${PJPrefix}-rt-pub
 
 #ルート先にIGWを定義
-  lalalaRoutePublic:
+  RoutePublic:
     Type: AWS::EC2::Route
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref lalalaIGW
-      RouteTableId: !Ref lalalaRouteTablePublic # Required
+      GatewayId: !Ref IGW
+      RouteTableId: !Ref RouteTablePublic # Required
  
 #ルートテーブルをパブリックサブネットに関連付け
   PublicSubnetRouteTableAssociation1a:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref lalalaRouteTablePublic # Required
-      SubnetId: !Ref lalalaPublicSubnet1a # Required
+      RouteTableId: !Ref RouteTablePublic # Required
+      SubnetId: !Ref PublicSubnet1a # Required
 
   PublicSubnetRouteTableAssociation1c:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      RouteTableId: !Ref lalalaRouteTablePublic # Required
-      SubnetId: !Ref lalalaPublicSubnet1c # Required
+      RouteTableId: !Ref RouteTablePublic # Required
+      SubnetId: !Ref PublicSubnet1c # Required
 
 
 Outputs:
   VPCId:
-    Value: !Ref lalalaVPC
+    Value: !Ref VPC
     Export: 
       Name: VPCId 
 
   PublicSubnet1aId:
-    Value: !Ref lalalaPublicSubnet1a
+    Value: !Ref PublicSubnet1a
     Export: 
       Name: PublicSubnet1aId
 
   PublicSubnet1cId:
-    Value: !Ref lalalaPublicSubnet1c
+    Value: !Ref PublicSubnet1c
     Export: 
       Name: PublicSubnet1cId
 
   PrivateSubnet1aId:
-    Value: !Ref lalalaPrivateSubnet1a
+    Value: !Ref PrivateSubnet1a
     Export: 
       Name: PrivateSubnet1aId 
 
   PrivateSubnet1cId:
-    Value: !Ref lalalaPrivateSubnet1c
+    Value: !Ref PrivateSubnet1c
     Export: 
       Name: PrivateSubnet1cId
 
